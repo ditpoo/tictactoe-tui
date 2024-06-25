@@ -15,7 +15,8 @@ type minMaxInput struct {
 
 func minMax(input minMaxInput) int {
 	// if the game has started and not ended
-	if input.lastMove != nil && t3utils.HasGameEnded(input.board, input.player, *input.lastMove) {
+	// if input.lastMove != nil && t3utils.HasGameEnded(input.board, input.player, *input.lastMove) {
+		if input.lastMove != nil && t3utils.HasGameEnded(input.board) {
 		// if the last move leads to victory 
 		if t3utils.CheckIfWinMove(input.board, input.player, *input.lastMove) {
 			if input.isMaximizingPlayer {

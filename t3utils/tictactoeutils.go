@@ -228,118 +228,35 @@ func CheckIfWinMove(board *[][]string, play string, move [2]int) bool {
 	return ct > 2
 }
 
-func CheckIfDraw(board *[][]string, lastPlay string, lastMove [2]int) bool {
-	if !HasGameStarted(board) {
-		return false
-	}
-
+func CheckIfDraw(board *[][]string) bool {
 	// can any player win in remaining moves
+	if !HasGameStarted(board) {
+		return false
+	}
+	if CheckIfWin(board, x) || CheckIfWin(board, o) {
+		return false
+	}
+	// no moves left
 	possibleMoves := GetPossibleMoves(board)
-	if len(possibleMoves) == 0 {
-		return true
-	}
-
-	// check if last move was a win move
-	if CheckIfWinMove(board, lastPlay, lastMove) {
-		return false
-	}
-
-	xboard := *CopyBoard(board)
-	oboard := *CopyBoard(board)
-
-	for i := 0; i < len(possibleMoves); i++ {
-		r, c := possibleMoves[i][0], possibleMoves[i][1]
-		xboard[r][c] = x
-	}
-
-	if CheckIfWin(&xboard, x) {
-		return false
-	}
-
-	for i := 0; i < len(possibleMoves); i++ {
-		r, c := possibleMoves[i][0], possibleMoves[i][1]
-		oboard[r][c] = o
-	}
-
-	if CheckIfWin(&oboard, o) {
-		return false
-	}
-
-	return true
+	return len(possibleMoves) == 0
 }
 
-func CheckIfDrawW(board *[][]string, lastPlay string) bool {
+func HasGameEnded(board *[][]string) bool {
 	if !HasGameStarted(board) {
 		return false
 	}
 
-	// can any player win in remaining moves
-	possibleMoves := GetPossibleMoves(board)
-	if len(possibleMoves) == 0 {
-		return true
-	}
-
-	// check if last move was a win move
-	if CheckIfWin(board, lastPlay) {
-		return false
-	}
-
-	xboard := *CopyBoard(board)
-	oboard := *CopyBoard(board)
-
-	for i := 0; i < len(possibleMoves); i++ {
-		r, c := possibleMoves[i][0], possibleMoves[i][1]
-		xboard[r][c] = x
-	}
-
-	if CheckIfWin(&xboard, x) {
-		return false
-	}
-
-	for i := 0; i < len(possibleMoves); i++ {
-		r, c := possibleMoves[i][0], possibleMoves[i][1]
-		oboard[r][c] = o
-	}
-
-	if CheckIfWin(&oboard, o) {
-		return false
-	}
-
-	return true
-}
-
-func HasGameEnded(board *[][]string, lastPlay string, lastMove [2]int) bool {
-	if !HasGameStarted(board) {
-		return false
-	}
-
-	if CheckIfDraw(board, lastPlay, lastMove) {
-		return true
-	}
-
-	if CheckIfWinMove(board, lastPlay, lastMove) {
-		return true
-	}
-	
-	return false
-}
-
-func HasGameEndedW(board *[][]string, lastPlay string) bool {
-	if !HasGameStarted(board) {
-		return false
-	}
-
-	if CheckIfDrawW(board, lastPlay) {
+	if CheckIfDraw(board) {
 		return true
 	}
 
 	if CheckIfWin(board, x) || CheckIfWin(board, o) {
 		return true
 	}
-
+	
 	return false
 }
 
 func CheckIfGameIsWinnable(board *[][]string, lastPlay string, lastMove [2]int) bool {
-	return !HasGameEnded(board, lastPlay, lastMove) && !CheckIfDraw(board, lastPlay, lastMove)
+	return !HasGameEnded(board)
 }

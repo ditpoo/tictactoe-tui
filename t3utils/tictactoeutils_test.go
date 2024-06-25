@@ -83,11 +83,6 @@ func TestCheckIfDraw(t *testing.T) {
 			{{Player: "O", Row: 1, Col: 0}, {Player: "O", Row: 1, Col: 1}, {Player: "X", Row: 1, Col: 2}},
 			{{Player: "X", Row: 2, Col: 0}, {Player: "X", Row: 2, Col: 1}, {Player: "O", Row: 2, Col: 2}},
 		},
-		{
-			{{Player: "X", Row: 0, Col: 0}, {Player: "O", Row: 0, Col: 1}, {Player: "X", Row: 0, Col: 2}},
-			{{Player: "O", Row: 1, Col: 0}, {Player: "X", Row: 1, Col: 1}, {Player: "O", Row: 1, Col: 2}},
-			{{Player: "O", Row: 2, Col: 0}, {Player: "X", Row: 2, Col: 1}, {Player: "X", Row: 2, Col: 2}},
-		},
 	}
 	for _, cond := range drawPositions {
 		board := make([][]string, 3)
@@ -99,17 +94,17 @@ func TestCheckIfDraw(t *testing.T) {
 				board[r][c] = " "
 			}
 		}
-		var rm, cm int
-		var ply string
+		// var rm, cm int
+		// var ply string
 		for _, Pos := range cond {
 			for _, pos := range Pos {
 				r, c := pos.Row, pos.Col
 				board[r][c] = pos.Player
-				rm, cm = r, c
-				ply = pos.Player
+				// rm, cm = r, c
+				// ply = pos.Player
 			}
 		}
-		ifdraw := CheckIfDraw(&board, ply, [2]int{rm, cm})
+		ifdraw := CheckIfDraw(&board)
 		if !ifdraw {
 			t.Fatalf(`failed for draw condition, %v for board as below: %v`, cond, printBoard(&board))
 		}
@@ -138,14 +133,11 @@ func TestHasGameEnded(t *testing.T) {
 				board[r][c] = " "
 			}
 		}
-		// var rm, cm int
 		for _, pos := range cond {
 			r, c := pos[0], pos[1]
 			board[r][c] = "X"
-			// rm, cm = r, c
 		}
-		// hasEnded := HasGameEnded(&board, "X", [2]int{rm,cm})
-		hasEnded := HasGameEndedW(&board, "X")
+		hasEnded := HasGameEnded(&board)
 		if !hasEnded {
 			t.Fatalf(`failed for win condition, %v for board as below: %v`, cond, printBoard(&board))
 		}
@@ -189,16 +181,13 @@ func TestHasGameEnded(t *testing.T) {
 				board[r][c] = " "
 			}
 		}
-		// var rm, cm int
 		for _, Pos := range cond {
 			for _, pos := range Pos {
 				r, c := pos.Row, pos.Col
 				board[r][c] = pos.Player
-				// rm, cm = r, c
 			}
 		}
-		// hasEnded := HasGameEnded(&board, "X", [2]int{rm, cm})
-		hasEnded := HasGameEndedW(&board, "X")
+		hasEnded := HasGameEnded(&board)
 		if !hasEnded {
 			t.Fatalf(`failed for draw condition, %v for board as below: %v`, cond, printBoard(&board))
 		}

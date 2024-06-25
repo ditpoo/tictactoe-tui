@@ -64,11 +64,11 @@ func (r *StandardTicTacToeGameRules) HasGameStarted(board t3board.TicTacToeBoard
 }
 
 func (r *StandardTicTacToeGameRules) HasGameEnded(board t3board.TicTacToeBoard) bool {
-	return t3utils.HasGameEnded(board.GetBoard(), board.GetLastPlay(), board.GetlastMove())
+	return t3utils.HasGameEnded(board.GetBoard())
 }
 
 func (r *StandardTicTacToeGameRules) IsGameDraw(board t3board.TicTacToeBoard) bool {
-	return t3utils.CheckIfDraw(board.GetBoard(), board.GetLastPlay(), board.GetlastMove())
+	return t3utils.CheckIfDraw(board.GetBoard())
 }
 
 func (r *StandardTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error) {
@@ -101,14 +101,16 @@ func (r *StandardTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) Gam
 		return result
 	}
 
-	if r.HasGameEnded(board) {
-		result.IsEnded = true
-		result.Winner = board.GetLastPlay()
-	}
-
 	if r.IsGameDraw(board) {
 		result.IsDraw = true
 		result.IsEnded = true
+		return result
+	}
+
+	// if game has ended and not draw then there is a winner
+	if r.HasGameEnded(board) {
+		result.IsEnded = true
+		result.Winner = board.GetLastPlay()
 	}
 
 	return result

@@ -85,8 +85,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					res := m.game.GetResult()
 					if res.IsDraw {
 						m.winner = "D"
+					} else {
+						m.winner = res.Winner
 					}
-					m.winner = res.Winner
 				} else {
 					m.player = switchPlayer(m.player)
 					m.aiMove = *t3gai.CalculateMove(m.game.GetBoard(), m.player)
