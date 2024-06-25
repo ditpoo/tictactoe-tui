@@ -1,8 +1,9 @@
-package t3rules
+package t3standardrules
 
 import (
 	"errors"
 	"t3/t3board"
+	"t3/t3rules"
 	"t3/t3utils"
 )
 
@@ -12,30 +13,11 @@ const (
 	n = " "
 )
 
-type GameResult struct {
-	IsEnded bool
-	IsDraw  bool
-	Winner  string
-}
-
 type StandardTicTacToeGameRules struct {
 	x             string
 	o             string
 	n             string
 	defaultAction string
-}
-
-type GameRulesManager interface {
-	CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error)
-	GetDefaultAction() string
-	GetResult(board t3board.TicTacToeBoard) GameResult
-	GetWinRow(board t3board.TicTacToeBoard) [3][2]int
-	HasGameStarted(board t3board.TicTacToeBoard) bool
-	HasGameEnded(board t3board.TicTacToeBoard) bool
-	IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error)
-	IsValidTurn(board t3board.TicTacToeBoard, play string) bool
-	Toss() string
-	TogglePlay(play string) string
 }
 
 func NewStandardTicTacToeGameRules() *StandardTicTacToeGameRules {
@@ -99,8 +81,8 @@ func (r *StandardTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, p
 	return true, nil
 }
 
-func (r *StandardTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) GameResult {
-	result := GameResult{
+func (r *StandardTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) t3rules.GameResult {
+	result := t3rules.GameResult{
 		IsEnded: false,
 		IsDraw:  false,
 		Winner:  "",

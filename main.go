@@ -25,6 +25,7 @@ type model struct {
 
 func main() {
 	game, err := NewStandardTicTacToeGame()
+	// game, err := NewInverseTicTacToeGame()
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -54,6 +55,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "winupdate":
+			return m, tea.Cmd(nil)
 		case "ctrl+c", "esc":
 			return m, tea.Quit
 		case "left":
@@ -84,6 +87,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					break
 				}
 				if m.game.HasGameEnded() {
+					// fmt.Println("game has eneded\n")
 					res := m.game.GetResult()
 					if res.IsDraw {
 						m.winner = "D"
@@ -107,9 +111,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	case string: // Handling the clear highlight message
-		if msg == "clearHighlight" {
+		if !m.game.HasGameEnded() && msg == "clearHighlight" {
 			m.showAiMove = false
 			return m, tea.Cmd(nil) // Update the view without any further commands
+		} else if m.game.HasGameEnded() {
+			// fmt.Println("game has eneded\n")
+			m.showAiMove = false
+			res := m.game.GetResult()
+			if res.IsDraw {
+				m.winner = "D"
+				return m, nil
+			} else {
+				m.winner = res.Winner
+				m.winRow = m.game.GetWinRow()
+				return m, tea.Tick(time.Second*2, func(time.Time) tea.Msg {
+					return "winupdate"
+				})
+				// return m, nil
+			}
 		}
 	}
 	return m, nil

@@ -6,7 +6,8 @@ import (
 	"t3/t3board"
 	"t3/t3gai"
 	"t3/t3game"
-	"t3/t3rules"
+	"t3/t3inverserules"
+	"t3/t3standardrules"
 	"t3/t3utils"
 )
 
@@ -28,7 +29,24 @@ func NewStandardTicTacToeGame() (*t3game.TicTacToeGame, error) {
 	if err != nil {
 		return nil, err
 	}
-	T3R := t3rules.NewStandardTicTacToeGameRules()
+	T3R := t3standardrules.NewStandardTicTacToeGameRules()
+	T3G, err := t3game.NewTicTacToeGame(*T3B, T3R)
+	if err != nil {
+		return nil, err
+	}
+	return T3G, nil
+}
+
+func NewInverseTicTacToeGame() (*t3game.TicTacToeGame, error) {
+	B, err := board.NewSquare2DBoard(3, 3)
+	if err != nil {
+		return nil, err
+	}
+	T3B, err := t3board.NewTicTacToeBoard(B)
+	if err != nil {
+		return nil, err
+	}
+	T3R := t3inverserules.NewInverseTicTacToeGameRules()
 	T3G, err := t3game.NewTicTacToeGame(*T3B, T3R)
 	if err != nil {
 		return nil, err
