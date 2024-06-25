@@ -205,7 +205,7 @@ func CheckIfWinMove(board *[][]string, play string, move [2]int) bool {
 	}
 
 	// check if there is match diagonal wise
-	
+
 	for i, ct = 0, 0; i <= 2; i++ {
 		if tboard[i][i] != play {
 			break
@@ -217,7 +217,6 @@ func CheckIfWinMove(board *[][]string, play string, move [2]int) bool {
 		return true
 	}
 
-	
 	for i, ct = 0, 0; i <= 2; i++ {
 		if tboard[i][(2-i)] != play {
 			break
@@ -253,7 +252,7 @@ func HasGameEnded(board *[][]string) bool {
 	if CheckIfWin(board, x) || CheckIfWin(board, o) {
 		return true
 	}
-	
+
 	return false
 }
 

@@ -18,8 +18,8 @@ type model struct {
 	winner     string
 	cursorX    int
 	cursorY    int
-	aiMove     [2]int  // to track AI's last move
-	showAiMove bool    // flag to highlight AI's move
+	aiMove     [2]int // to track AI's last move
+	showAiMove bool   // flag to highlight AI's move
 }
 
 func main() {

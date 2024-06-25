@@ -84,7 +84,7 @@ func (r *StandardTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, p
 	isValidMove, err := r.IsValidMove(board, &move)
 	if err != nil {
 		return false, err
-	} 
+	}
 	if !isValidMove {
 		return false, errors.New("invalid move")
 	}

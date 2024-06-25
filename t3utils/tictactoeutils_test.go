@@ -7,8 +7,8 @@ import (
 
 func printBoard(board *[][]string) string {
 	str := "\n"
-	for _, rw := range (*board) {
-		for j, el  := range rw {
+	for _, rw := range *board {
+		for j, el := range rw {
 			if j > 0 {
 				str += fmt.Sprintf("| %+v ", el)
 			} else {
@@ -39,7 +39,7 @@ func TestCheckIfWin(t *testing.T) {
 			board[i] = make([]string, 3)
 		}
 		for r := range board {
-			for c  := range board {
+			for c := range board {
 				board[r][c] = " "
 			}
 		}
