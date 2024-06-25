@@ -20,6 +20,7 @@ type model struct {
 	cursorY    int
 	aiMove     [2]int // to track AI's last move
 	showAiMove bool   // flag to highlight AI's move
+	winRow     [3][2]int
 }
 
 func main() {
@@ -41,6 +42,7 @@ func initialModel(game *t3game.TicTacToeGame) model {
 		player:  game.Toss(),
 		cursorX: 0,
 		cursorY: 0,
+		winRow: [3][2]int{{-1,-1}, {-1,-1}, {-1,-1}},
 	}
 }
 
@@ -87,6 +89,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.winner = "D"
 					} else {
 						m.winner = res.Winner
+						m.winRow = m.game.GetWinRow()
+						return m, tea.Tick(time.Second*2, func(time.Time) tea.Msg {
+							return "clearHighlight"
+						})
 					}
 				} else {
 					m.player = m.game.TogglePlay()
@@ -115,8 +121,9 @@ func (m model) View() string {
 	for i, row := range *m.game.GetBoard() {
 		for j, cell := range row {
 			cellStr := ifEmpty(cell, " ")
+			position := [2]int{i, j}
 			if m.cursorY == i && m.cursorX == j {
-				if m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j {
+				if inWinRow(position, m) || (m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j) {
 					// Highlight the entire cell for AI move
 					b.WriteString(fmt.Sprintf("\033[48;2;240;240;240m\033[38;2;0;0;0m[%s]\033[0m", cellStr))
 				} else {
@@ -124,7 +131,7 @@ func (m model) View() string {
 					b.WriteString(fmt.Sprintf("[%s]", cellStr))
 				}
 			} else {
-				if m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j {
+				if inWinRow(position, m) || (m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j) {
 					// Highlight the entire cell for AI move
 					b.WriteString(fmt.Sprintf("\033[48;2;240;240;240m\033[38;2;0;0;0m %s \033[0m", cellStr))
 				} else {
@@ -157,4 +164,15 @@ func ifEmpty(val string, defaultVal string) string {
 		return defaultVal
 	}
 	return val
+}
+
+func inWinRow(position [2]int, m model) bool {
+	rp, cp := position[0], position[1]
+	for _, pos:= range m.winRow {
+		r, c := pos[0], pos[1]
+		if r == rp && c == cp {
+			return true
+		}
+	}
+	return false
 }

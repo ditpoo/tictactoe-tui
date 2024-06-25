@@ -103,3 +103,7 @@ func (t *TicTacToeGame) Toss() string {
 func (t *TicTacToeGame) TogglePlay() string {
 	return t.grules.TogglePlay(t.GetLastPlay())
 }
+
+func (t *TicTacToeGame) GetWinRow() [3][2]int {
+	return t.grules.GetWinRow(t.tboard)
+}

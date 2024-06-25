@@ -259,3 +259,55 @@ func HasGameEnded(board *[][]string) bool {
 func CheckIfGameIsWinnable(board *[][]string, lastPlay string, lastMove [2]int) bool {
 	return !HasGameEnded(board)
 }
+
+// assuming it is called after the game has ended
+func GetWinRow(board *[][]string, play string) [3][2]int {
+	tboard := *board
+	// "W" indicates win
+
+	// check if there is match row wise
+	for r := 0; r < 3; r++ {
+		for c := 0; c < 3; c++ {
+			if tboard[r][c] != play {
+				break
+			}
+			if c == 2 {
+				return [3][2]int{{r, 0}, {r, 1}, {r, 2}}
+			}
+		}
+	}
+
+	// check if there is match coloum wise
+	for c := 0; c < 3; c++ {
+		for r := 0; r < 3; r++ {
+			if tboard[r][c] != play {
+				break
+			}
+			if r == 2 {
+				return [3][2]int{{0, c}, {1, c}, {2, c}}
+			}
+		}
+	}
+
+	// check if there is match diagonal wise
+	for i := 0; i <= 2; i++ {
+		if tboard[i][i] != play {
+			break
+		}
+		if i == 2 {
+			return [3][2]int{{0,0}, {1, 1}, {2, 2}}
+		}
+	}
+
+	for i := 0; i <= 2; i++ {
+		if tboard[i][(2-i)] != play {
+			break
+		}
+
+		if i == 2 {
+			return [3][2]int{{0, 2}, {1, 1}, {2, 0}}
+		}
+	}
+
+	return [3][2]int{{-1, -1}, {-1, -1}, {-1, -1}}
+}
