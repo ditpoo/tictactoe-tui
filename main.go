@@ -93,7 +93,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.aiMove = *t3gai.CalculateMove(m.game.GetBoard(), m.player)
 					m.game.SetMove(m.player, &m.aiMove)
 					m.showAiMove = true // Enable highlight for AI move
-					m.player = switchPlayer(m.player)
+					m.player = m.game.TogglePlay()
 					return m, tea.Tick(time.Second*2, func(time.Time) tea.Msg {
 						return "clearHighlight"
 					})
@@ -142,7 +142,7 @@ func (m model) View() string {
 	}
 	b.WriteString("\n\n")
 	if m.winner == "D" {
-		b.WriteString("Game is a draw")
+		b.WriteString("Game is a draw!\n")
 	} else if m.winner != "" {
 		b.WriteString(fmt.Sprintf("Player %s wins!\n", m.winner))
 	} else {
@@ -150,14 +150,6 @@ func (m model) View() string {
 	}
 	b.WriteString("Press Esc or Ctrl+C to quit.\n")
 	return b.String()
-}
-
-
-func switchPlayer(current string) string {
-	if current == "X" {
-		return "O"
-	}
-	return "X"
 }
 
 func ifEmpty(val string, defaultVal string) string {
