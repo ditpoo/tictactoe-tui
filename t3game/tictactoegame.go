@@ -44,10 +44,6 @@ func (t *TicTacToeGame) GetLastMove() [2]int {
 	return t.tboard.GetlastMove()
 }
 
-func (t *TicTacToeGame) validatePlayer(player string) bool {
-	return (player == x || player == o)
-}
-
 // this method assumes that it is called afer move has played and persisted in lastPlay and lastMove
 func (t *TicTacToeGame) updateHistory() {
 	t.moveHistory = append(t.moveHistory, move{play: t.tboard.GetLastPlay(), position: t.tboard.GetlastMove()})
@@ -62,34 +58,19 @@ func (t *TicTacToeGame) GetBoard() *[][]string {
 }
 
 func (t *TicTacToeGame) SetMove(player string, position *[2]int) (bool, error) {
-	if !t.validatePlayer(player) {
-		return false, errors.New("invalid player state")
-	}
-	canMakeMove, err := t.grules.CanMakeMove(t.tboard, player, *position, "set") 
-	if !canMakeMove {
-		if err != nil {
-			return false, err
-		} else {
-			return false, errors.New("can't make move")
-		}
-	}
-	if player == t.tboard.GetLastPlay() {
-		return false, errors.New("player can't make move two times in a row")
-	}
-	state, err := t.tboard.GetState(position)
+	canMakeMove, err := t.grules.CanMakeMove(t.tboard, player, *position, "set")
 	if err != nil {
 		return false, err
 	}
-	if state != t.n {
-		return false, errors.New("can't make move for that position")
+	if !canMakeMove {
+		return false, errors.New("can't make move")
 	}
 	isStateSet, err := t.tboard.SetState(position, player)
+	if err != nil {
+		return false, err
+	}
 	if !isStateSet {
-		if err != nil {
-			return false, err
-		} else {
-			return false, errors.New("failed to set state or make move for that position")
-		}
+		return false, errors.New("failed to set state or make move for that position")
 	}
 	t.updateHistory()
 	return true, nil

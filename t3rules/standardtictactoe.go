@@ -26,13 +26,13 @@ type StandardTicTacToeGameRules struct {
 }
 
 type GameRulesManager interface {
+	CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error)
 	GetDefaultAction() string
-	IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error)
-	IsValidTurn(board t3board.TicTacToeBoard, play string) bool
+	GetResult(board t3board.TicTacToeBoard) GameResult
 	HasGameStarted(board t3board.TicTacToeBoard) bool
 	HasGameEnded(board t3board.TicTacToeBoard) bool
-	CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error)
-	GetResult(board t3board.TicTacToeBoard) GameResult
+	IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error)
+	IsValidTurn(board t3board.TicTacToeBoard, play string) bool
 	Toss() string
 	TogglePlay(play string) string
 }
@@ -47,6 +47,10 @@ func NewStandardTicTacToeGameRules() *StandardTicTacToeGameRules {
 
 func (r *StandardTicTacToeGameRules) GetDefaultAction() string {
 	return r.defaultAction
+}
+
+func (r *StandardTicTacToeGameRules) IsValidPlayer(player string) bool {
+	return (player == x || player == o)
 }
 
 func (r *StandardTicTacToeGameRules) IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error) {
@@ -74,13 +78,15 @@ func (r *StandardTicTacToeGameRules) IsGameDraw(board t3board.TicTacToeBoard) bo
 }
 
 func (r *StandardTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error) {
+	if !r.IsValidPlayer(play) {
+		return false, errors.New("invalid player state")
+	}
 	isValidMove, err := r.IsValidMove(board, &move)
+	if err != nil {
+		return false, err
+	} 
 	if !isValidMove {
-		if err != nil {
-			return false, err
-		} else {
-			return false, errors.New("invalid move")
-		}
+		return false, errors.New("invalid move")
 	}
 	isValidTurn := r.IsValidTurn(board, play)
 	if !isValidTurn {
