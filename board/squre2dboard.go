@@ -104,14 +104,12 @@ func (s *Square2DBoard) GetState(pos *[2]int) (string, error) {
 
 func (s *Square2DBoard) SetState(pos *[2]int, state string) (bool, error) {
 	isSet, err := s.setState(pos, state)
-	if !isSet {
-		if err != nil {
-			return false, err
-		} else {
-			return false, errors.New("failed to set the state")
-		}
+	if err != nil {
+		return false, err
 	}
-
+	if !isSet {
+		return false, errors.New("failed to set the state")
+	}
 	return true, nil
 }
 

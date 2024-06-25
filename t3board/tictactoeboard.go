@@ -87,19 +87,15 @@ func (t *TicTacToeBoard) SetState(pos *[2]int, state string) (bool, error) {
 	if !t.isValidPlay(state) {
 		return false, errors.New("invalid state value")
 	}
-
 	isStateSet, err := t.board.SetState(pos, state)
-	if !isStateSet {
-		if err != nil {
-			return false, err
-		} else {
-			return false, errors.New("failed to set state for tic tac toe board")
-		}
+	if err != nil {
+		return false, err
 	}
-
+	if !isStateSet {
+		return false, errors.New("failed to set state for tic tac toe board")
+	}
 	t.setLastPlay(state)
 	t.setlastMove(pos)
-
 	return true, nil
 }
 
@@ -111,6 +107,5 @@ func (t *TicTacToeBoard) GetState(pos *[2]int) (string, error) {
 	if !(t.isValidState(state)) {
 		return "", errors.New("invalid state returned")
 	}
-
 	return state, nil
 }
