@@ -67,7 +67,7 @@ func (t *TicTacToeBoard) isValidPlay(state string) bool {
 	return (state == t.x || state == t.o)
 }
 
-func (t *TicTacToeBoard) setLastPlay(play string) {
+func (t *TicTacToeBoard) SetLastPlay(play string) {
 	t.lastPlay = play
 }
 
@@ -75,7 +75,7 @@ func (t *TicTacToeBoard) GetLastPlay() string {
 	return t.lastPlay
 }
 
-func (t *TicTacToeBoard) setlastMove(position *[2]int) {
+func (t *TicTacToeBoard) SetlastMove(position *[2]int) {
 	t.lastMove = *position
 }
 
@@ -94,8 +94,8 @@ func (t *TicTacToeBoard) SetState(pos *[2]int, state string) (bool, error) {
 	if !isStateSet {
 		return false, errors.New("failed to set state for tic tac toe board")
 	}
-	t.setLastPlay(state)
-	t.setlastMove(pos)
+	// t.setLastPlay(state)
+	// t.setlastMove(pos)
 	return true, nil
 }
 

@@ -26,6 +26,7 @@ type model struct {
 func main() {
 	game, err := NewStandardTicTacToeGame()
 	// game, err := NewInverseTicTacToeGame()
+	// game, err := NewNeutralTicTacToeGame()
 	if err != nil {
 		fmt.Println(err)
 		return

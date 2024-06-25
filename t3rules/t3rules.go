@@ -19,6 +19,7 @@ type GameRulesManager interface {
 	HasGameEnded(board t3board.TicTacToeBoard) bool
 	IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error)
 	IsValidTurn(board t3board.TicTacToeBoard, play string) bool
+	MakeMove(board *t3board.TicTacToeBoard, play string, move [2]int) (bool, error)
 	Toss() string
 	TogglePlay(play string) string
 }

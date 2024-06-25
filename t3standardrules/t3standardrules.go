@@ -81,6 +81,18 @@ func (r *StandardTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, p
 	return true, nil
 }
 
+func (r *StandardTicTacToeGameRules) MakeMove(board *t3board.TicTacToeBoard, play string, move [2]int) (bool, error) {
+	isStateSet, err := board.SetState(&move, play)
+	if err != nil {
+		return false, err
+	}
+	if isStateSet {
+		board.SetLastPlay(play)
+		board.SetlastMove(&move)
+	}
+	return isStateSet, err
+}
+
 func (r *StandardTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) t3rules.GameResult {
 	result := t3rules.GameResult{
 		IsEnded: false,

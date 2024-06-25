@@ -1,4 +1,4 @@
-package t3inverserules
+package t3neutralrules
 
 import (
 	"errors"
@@ -13,30 +13,30 @@ const (
 	n = " "
 )
 
-type InverseTicTacToeGameRules struct {
+type NeutralTicTacToeGameRules struct {
 	x             string
 	o             string
 	n             string
 	defaultAction string
 }
 
-func NewInverseTicTacToeGameRules() *InverseTicTacToeGameRules {
-	return &InverseTicTacToeGameRules{
+func NewNeutralTicTacToeGameRules() *NeutralTicTacToeGameRules {
+	return &NeutralTicTacToeGameRules{
 		x: x,
 		o: o,
 		n: n,
 	}
 }
 
-func (r *InverseTicTacToeGameRules) GetDefaultAction() string {
+func (r *NeutralTicTacToeGameRules) GetDefaultAction() string {
 	return r.defaultAction
 }
 
-func (r *InverseTicTacToeGameRules) IsValidPlayer(player string) bool {
+func (r *NeutralTicTacToeGameRules) IsValidPlayer(player string) bool {
 	return (player == x || player == o)
 }
 
-func (r *InverseTicTacToeGameRules) IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error) {
+func (r *NeutralTicTacToeGameRules) IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error) {
 	state, err := board.GetState(move)
 	if err != nil {
 		return false, err
@@ -44,26 +44,23 @@ func (r *InverseTicTacToeGameRules) IsValidMove(board t3board.TicTacToeBoard, mo
 	return state == n, nil
 }
 
-func (r *InverseTicTacToeGameRules) IsValidTurn(board t3board.TicTacToeBoard, play string) bool {
+func (r *NeutralTicTacToeGameRules) IsValidTurn(board t3board.TicTacToeBoard, play string) bool {
 	return play != board.GetLastPlay()
 }
 
-func (r *InverseTicTacToeGameRules) HasGameStarted(board t3board.TicTacToeBoard) bool {
+func (r *NeutralTicTacToeGameRules) HasGameStarted(board t3board.TicTacToeBoard) bool {
 	return t3utils.HasGameStarted(board.GetBoard())
 }
 
-func (r *InverseTicTacToeGameRules) HasGameEnded(board t3board.TicTacToeBoard) bool {
+func (r *NeutralTicTacToeGameRules) HasGameEnded(board t3board.TicTacToeBoard) bool {
 	return t3utils.HasGameEnded(board.GetBoard())
 }
 
-func (r *InverseTicTacToeGameRules) IsGameDraw(board t3board.TicTacToeBoard) bool {
+func (r *NeutralTicTacToeGameRules) IsGameDraw(board t3board.TicTacToeBoard) bool {
 	return t3utils.CheckIfDraw(board.GetBoard())
 }
 
-func (r *InverseTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error) {
-	if !r.IsValidPlayer(play) {
-		return false, errors.New("invalid player state")
-	}
+func (r *NeutralTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error) {
 	isValidMove, err := r.IsValidMove(board, &move)
 	if err != nil {
 		return false, err
@@ -71,17 +68,25 @@ func (r *InverseTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, pl
 	if !isValidMove {
 		return false, errors.New("invalid move")
 	}
-	isValidTurn := r.IsValidTurn(board, play)
-	if !isValidTurn {
-		return false, errors.New("invalid turn")
-	}
 	if r.HasGameEnded(board) {
 		return false, errors.New("game has ended")
 	}
 	return true, nil
 }
 
-func (r *InverseTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) t3rules.GameResult {
+func (r *NeutralTicTacToeGameRules) MakeMove(board *t3board.TicTacToeBoard, play string, move [2]int) (bool, error) {
+	isStateSet, err := board.SetState(&move, x)
+	if err != nil {
+		return false, err
+	}
+	if isStateSet {
+		board.SetLastPlay(play)
+		board.SetlastMove(&move)
+	}
+	return isStateSet, err
+}
+
+func (r *NeutralTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) t3rules.GameResult {
 	result := t3rules.GameResult{
 		IsEnded: false,
 		IsDraw:  false,
@@ -101,20 +106,20 @@ func (r *InverseTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) t3ru
 	// if game has ended and not draw then there is a winner
 	if r.HasGameEnded(board) {
 		result.IsEnded = true
-		result.Winner = r.TogglePlay(board.GetLastPlay())
+		result.Winner = board.GetLastPlay()
 	}
 
 	return result
 }
 
-func (r *InverseTicTacToeGameRules) Toss() string {
+func (r *NeutralTicTacToeGameRules) Toss() string {
 	return t3utils.Toss()
 }
 
-func (r *InverseTicTacToeGameRules) TogglePlay(play string) string {
+func (r *NeutralTicTacToeGameRules) TogglePlay(play string) string {
 	return t3utils.TogglePlay(play)
 }
 
-func (r *InverseTicTacToeGameRules) GetWinRow(board t3board.TicTacToeBoard) [3][2]int {
+func (r *NeutralTicTacToeGameRules) GetWinRow(board t3board.TicTacToeBoard) [3][2]int {
 	return t3utils.GetWinRow(board.GetBoard(), board.GetLastPlay())
 }

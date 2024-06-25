@@ -65,7 +65,11 @@ func (t *TicTacToeGame) SetMove(player string, position *[2]int) (bool, error) {
 	if !canMakeMove {
 		return false, errors.New("can't make move")
 	}
-	isStateSet, err := t.tboard.SetState(position, player)
+	// isStateSet, err := t.tboard.SetState(position, player)
+	// if err != nil {
+	// 	return false, err
+	// }
+	isStateSet, err := t.grules.MakeMove(&t.tboard, player, *position)
 	if err != nil {
 		return false, err
 	}
