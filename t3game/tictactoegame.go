@@ -114,3 +114,11 @@ func (t *TicTacToeGame) GetRules() t3rules.GameRulesManager {
 func (t *TicTacToeGame) GetGameHistory() []move {
 	return t.moveHistory
 }
+
+func (t *TicTacToeGame) Toss() string {
+	return t.grules.Toss()
+}
+
+func (t *TicTacToeGame) TogglePlay() string {
+	return t.grules.TogglePlay(t.GetLastPlay())
+}

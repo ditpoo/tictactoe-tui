@@ -14,32 +14,34 @@ const (
 
 type GameResult struct {
 	IsEnded bool
-	IsDraw bool
-	Winner string
+	IsDraw  bool
+	Winner  string
 }
 
 type StandardTicTacToeGameRules struct {
-	x           string
-	o           string
-	n           string
+	x             string
+	o             string
+	n             string
 	defaultAction string
 }
 
 type GameRulesManager interface {
-    GetDefaultAction() string
-    IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error)
-    IsValidTurn(board t3board.TicTacToeBoard, play string) bool
-    HasGameStarted(board t3board.TicTacToeBoard) bool
-    HasGameEnded(board t3board.TicTacToeBoard) bool
-    CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error)
-    GetResult(board t3board.TicTacToeBoard) GameResult
+	GetDefaultAction() string
+	IsValidMove(board t3board.TicTacToeBoard, move *[2]int) (bool, error)
+	IsValidTurn(board t3board.TicTacToeBoard, play string) bool
+	HasGameStarted(board t3board.TicTacToeBoard) bool
+	HasGameEnded(board t3board.TicTacToeBoard) bool
+	CanMakeMove(board t3board.TicTacToeBoard, play string, move [2]int, action string) (bool, error)
+	GetResult(board t3board.TicTacToeBoard) GameResult
+	Toss() string
+	TogglePlay(play string) string
 }
 
 func NewStandardTicTacToeGameRules() *StandardTicTacToeGameRules {
 	return &StandardTicTacToeGameRules{
-		x:      x,
-		o:      o,
-		n:      n,
+		x: x,
+		o: o,
+		n: n,
 	}
 }
 
@@ -93,8 +95,8 @@ func (r *StandardTicTacToeGameRules) CanMakeMove(board t3board.TicTacToeBoard, p
 func (r *StandardTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) GameResult {
 	result := GameResult{
 		IsEnded: false,
-		IsDraw: false,
-		Winner: "",
+		IsDraw:  false,
+		Winner:  "",
 	}
 
 	if !r.HasGameStarted(board) {
@@ -114,4 +116,12 @@ func (r *StandardTicTacToeGameRules) GetResult(board t3board.TicTacToeBoard) Gam
 	}
 
 	return result
+}
+
+func (r *StandardTicTacToeGameRules) Toss() string {
+	return t3utils.Toss()
+}
+
+func (r *StandardTicTacToeGameRules) TogglePlay(play string) string {
+	return t3utils.TogglePlay(play)
 }

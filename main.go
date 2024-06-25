@@ -38,7 +38,7 @@ func main() {
 func initialModel(game *t3game.TicTacToeGame) model {
 	return model{
 		game:    game,
-		player:  "X",
+		player:  game.Toss(),
 		cursorX: 0,
 		cursorY: 0,
 	}
@@ -89,7 +89,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.winner = res.Winner
 					}
 				} else {
-					m.player = switchPlayer(m.player)
+					m.player = m.game.TogglePlay()
 					m.aiMove = *t3gai.CalculateMove(m.game.GetBoard(), m.player)
 					m.game.SetMove(m.player, &m.aiMove)
 					m.showAiMove = true // Enable highlight for AI move
