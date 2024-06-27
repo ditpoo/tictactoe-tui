@@ -1,99 +1,99 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "strings"
+	"fmt"
+	tea "github.com/charmbracelet/bubbletea"
+	"os"
+	"strings"
 	"t3/t3gai"
 	"t3/t3game"
 	"time"
-    tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
-    game              *t3game.TicTacToeGame
-    player            string
-    winner            string
-    cursorX           int
-    cursorY           int
-    aiMove            [2]int
-    showAiMove        bool
-    winRow            [3][2]int
-    menu              []string
-    selected          int
-    inGame            bool
-    showInstructions  bool
-    instructions      string
-	instructionsMap   map[int]string
+	game             *t3game.TicTacToeGame
+	player           string
+	winner           string
+	cursorX          int
+	cursorY          int
+	aiMove           [2]int
+	showAiMove       bool
+	winRow           [3][2]int
+	menu             []string
+	selected         int
+	inGame           bool
+	showInstructions bool
+	instructions     string
+	instructionsMap  map[int]string
 }
 
 func main() {
-    p := tea.NewProgram(initialModel())
-    if _, err := p.Run(); err != nil {
-        fmt.Printf("Alas, there's been an error: %s\n", err)
-        os.Exit(1)
-    }
+	p := tea.NewProgram(initialModel())
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Alas, there's been an error: %s\n", err)
+		os.Exit(1)
+	}
 }
 
 func initialModel() model {
-    return model{
-        menu:             []string{"Standard Tic Tac Toe", "Inverse Tic Tac Toe", "Neutral Tic Tac Toe"},
-		instructionsMap:  map[int]string{
+	return model{
+		menu: []string{"Standard Tic Tac Toe", "Inverse Tic Tac Toe", "Neutral Tic Tac Toe"},
+		instructionsMap: map[int]string{
 			0: standardt3instructions,
 			1: inverset3instructions,
 			2: neutralt3instructions,
 		},
-        selected:         0,
-        inGame:           false,
-        showInstructions: false,
-        instructions:     "",
-		winRow: [3][2]int{{-1,-1}, {-1,-1}, {-1,-1}},
-    }
+		selected:         0,
+		inGame:           false,
+		showInstructions: false,
+		instructions:     "",
+		winRow:           [3][2]int{{-1, -1}, {-1, -1}, {-1, -1}},
+	}
 }
 
 func (m model) Init() tea.Cmd {
-    return nil
+	return nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    switch msg := msg.(type) {
-    case tea.KeyMsg:
-        if msg.Type == tea.KeyCtrlC || msg.String() == "esc" {
-            return m, tea.Quit
-        }
-        if m.inGame {
-            return m.gameUpdate(msg)
-        } else if m.showInstructions {
-            if msg.Type == tea.KeyEnter {
-                m.inGame = true
-                m.showInstructions = false
-            }
-            return m, nil
-        }
-        switch msg.Type {
-        case tea.KeyUp, tea.KeyDown:
-            if msg.Type == tea.KeyUp && m.selected > 0 {
-                m.selected--
-            } else if msg.Type == tea.KeyDown && m.selected < len(m.menu)-1 {
-                m.selected++
-            }
-        case tea.KeyEnter:
-            var err error
-            m.game, err = initializeGame(m.menu[m.selected])
-            if err != nil {
-                fmt.Println(err)
-                return m, tea.Quit
-            }
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.Type == tea.KeyCtrlC || msg.String() == "esc" {
+			return m, tea.Quit
+		}
+		if m.inGame {
+			return m.gameUpdate(msg)
+		} else if m.showInstructions {
+			if msg.Type == tea.KeyEnter {
+				m.inGame = true
+				m.showInstructions = false
+			}
+			return m, nil
+		}
+		switch msg.Type {
+		case tea.KeyUp, tea.KeyDown:
+			if msg.Type == tea.KeyUp && m.selected > 0 {
+				m.selected--
+			} else if msg.Type == tea.KeyDown && m.selected < len(m.menu)-1 {
+				m.selected++
+			}
+		case tea.KeyEnter:
+			var err error
+			m.game, err = initializeGame(m.menu[m.selected])
+			if err != nil {
+				fmt.Println(err)
+				return m, tea.Quit
+			}
 			m.player = m.game.Toss()
-            m.instructions = fmt.Sprintf("Instructions for %s:\n\n%s\n\n", m.menu[m.selected], m.instructionsMap[m.selected])
-            m.showInstructions = true
-        }
+			m.instructions = fmt.Sprintf("Instructions for %s:\n\n%s\n\n", m.menu[m.selected], m.instructionsMap[m.selected])
+			m.showInstructions = true
+		}
 	case string:
 		if m.inGame {
-            return m.gameUpdate(msg)
-        }
-    }
-    return m, nil
+			return m.gameUpdate(msg)
+		}
+	}
+	return m, nil
 }
 
 const (
@@ -125,19 +125,19 @@ Press Enter to start playing Neutral Tic Tac Toe.
 )
 
 func initializeGame(choice string) (*t3game.TicTacToeGame, error) {
-    switch choice {
-    case "Standard Tic Tac Toe":
-        return NewStandardTicTacToeGame()
-    case "Inverse Tic Tac Toe":
-        return NewInverseTicTacToeGame()
-    case "Neutral Tic Tac Toe":
-        return NewNeutralTicTacToeGame()
-    }
-    return nil, fmt.Errorf("invalid game choice")
+	switch choice {
+	case "Standard Tic Tac Toe":
+		return NewStandardTicTacToeGame()
+	case "Inverse Tic Tac Toe":
+		return NewInverseTicTacToeGame()
+	case "Neutral Tic Tac Toe":
+		return NewNeutralTicTacToeGame()
+	}
+	return nil, fmt.Errorf("invalid game choice")
 }
 
 func (m model) gameUpdate(msg tea.Msg) (tea.Model, tea.Cmd) {
-    // Add your existing game logic here...
+	// Add your existing game logic here...
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -214,52 +214,52 @@ func (m model) gameUpdate(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	}
-    return m, nil
+	return m, nil
 }
 
 func (m model) View() string {
-    if m.showInstructions {
-        return m.instructions
-    }
-    if m.inGame {
-        var b strings.Builder
-        b.WriteString("\n")
-        for i, row := range *m.game.GetBoard() {
-            for j, cell := range row {
-                cellStr := ifEmpty(cell, " ")
-                position := [2]int{i, j}
-                if m.cursorY == i && m.cursorX == j {
-                    if inWinRow(position, m) || (m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j) {
-                        b.WriteString(fmt.Sprintf("\033[48;2;240;240;240m\033[38;2;0;0;0m[%s]\033[0m", cellStr))
-                    } else {
-                        b.WriteString(fmt.Sprintf("[%s]", cellStr))
-                    }
-                } else {
-                    if inWinRow(position, m) || (m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j) {
-                        b.WriteString(fmt.Sprintf("\033[48;2;240;240;240m\033[38;2;0;0;0m %s \033[0m", cellStr))
-                    } else {
-                        b.WriteString(fmt.Sprintf(" %s ", cellStr))
-                    }
-                }
-                if j < 2 {
-                    b.WriteString("|")
-                }
-            }
-            if i < 2 {
-                b.WriteString("\n---+---+---\n")
-            }
-        }
-        b.WriteString("\n\n")
-        if m.winner == "D" {
-            b.WriteString("Game is a draw!\n")
-        } else if m.winner != "" {
-            b.WriteString(fmt.Sprintf("Player %s wins!\n", m.winner))
-        } else {
-            b.WriteString(fmt.Sprintf("Current Player: %s\n", m.player))
-        }
-        b.WriteString("Press Esc or Ctrl+C to quit.\n")
-        return b.String()
-    } else {
+	if m.showInstructions {
+		return m.instructions
+	}
+	if m.inGame {
+		var b strings.Builder
+		b.WriteString("\n")
+		for i, row := range *m.game.GetBoard() {
+			for j, cell := range row {
+				cellStr := ifEmpty(cell, " ")
+				position := [2]int{i, j}
+				if m.cursorY == i && m.cursorX == j {
+					if inWinRow(position, m) || (m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j) {
+						b.WriteString(fmt.Sprintf("\033[48;2;240;240;240m\033[38;2;0;0;0m[%s]\033[0m", cellStr))
+					} else {
+						b.WriteString(fmt.Sprintf("[%s]", cellStr))
+					}
+				} else {
+					if inWinRow(position, m) || (m.showAiMove && m.aiMove[0] == i && m.aiMove[1] == j) {
+						b.WriteString(fmt.Sprintf("\033[48;2;240;240;240m\033[38;2;0;0;0m %s \033[0m", cellStr))
+					} else {
+						b.WriteString(fmt.Sprintf(" %s ", cellStr))
+					}
+				}
+				if j < 2 {
+					b.WriteString("|")
+				}
+			}
+			if i < 2 {
+				b.WriteString("\n---+---+---\n")
+			}
+		}
+		b.WriteString("\n\n")
+		if m.winner == "D" {
+			b.WriteString("Game is a draw!\n")
+		} else if m.winner != "" {
+			b.WriteString(fmt.Sprintf("Player %s wins!\n", m.winner))
+		} else {
+			b.WriteString(fmt.Sprintf("Current Player: %s\n", m.player))
+		}
+		b.WriteString("Press Esc or Ctrl+C to quit.\n")
+		return b.String()
+	} else {
 		// Menu rendering
 		s := "Select a game variant:\n\n"
 		for i, choice := range m.menu {
@@ -282,7 +282,7 @@ func ifEmpty(val string, defaultVal string) string {
 
 func inWinRow(position [2]int, m model) bool {
 	rp, cp := position[0], position[1]
-	for _, pos:= range m.winRow {
+	for _, pos := range m.winRow {
 		r, c := pos[0], pos[1]
 		if r == rp && c == cp {
 			return true
